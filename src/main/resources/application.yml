@@ -1,0 +1,58 @@
+#=======================================================================================
+# Global Config
+#=======================================================================================
+spring:
+  application:
+    name: loadgenerator
+  profiles:
+    active: "dev"
+  security:
+    basic:
+      enabled: false
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak.auth.betalab.rp.bt.com/auth/realms/master
+
+# Actuator endpoints
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /_/
+      path-mapping:
+        health: health
+  endpoint:
+    health:
+      enabled: true
+  exposure.include: '*'
+  cors:
+    allowed-origins: '*'
+    allowed-methods: GET,POST
+    allowed-headers: '*'
+
+loadgenerator:
+  queueAddress: SETINENV
+  queuePort: SETINENV
+  queueUser: SETINENV
+  queuePassword: SETINENV
+  queueName: SETINENV
+
+---
+#=======================================================================================
+# Development Profile Config
+#=======================================================================================
+spring:
+  profiles: dev
+server:
+  port: 8080
+
+
+---
+#=======================================================================================
+# Production ProfileConfig - ALL CONFIG SHOULD BE PASSED AS ENV VARIABLES
+#=======================================================================================
+spring:
+  profiles: production
+server:
+  port: 8080
