@@ -24,15 +24,15 @@ public class Customer {
         isUnderstanding = rand.nextInt(100) > Config.getUnderstandingBias();
     }
 
-    public boolean isHappyToWait() {
+    public boolean getIsHappyToWait() {
         return isHappyToWait;
     }
 
-    public boolean isHappyToWaitForService() {
+    public boolean getIsHappyToWaitForService() {
         return isHappyToWaitForService;
     }
 
-    public boolean isUnderstanding() {
+    public boolean getIsUnderstanding() {
         return isUnderstanding;
     }
 }

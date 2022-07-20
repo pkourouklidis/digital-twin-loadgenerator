@@ -23,11 +23,11 @@ public class LoadRequest {
 
     private String simulationStartTime;
 
-    public boolean isOn() {
+    public boolean getIsOn() {
         return on;
     }
 
-    public void setOn(boolean on) {
+    public void setIsOn(boolean on) {
         this.on = on;
     }
 

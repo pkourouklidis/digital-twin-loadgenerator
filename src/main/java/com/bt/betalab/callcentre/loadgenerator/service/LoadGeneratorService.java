@@ -35,7 +35,7 @@ public class LoadGeneratorService {
         config.setWaitTimeBias(load.getWaitTimeBias());
         config.setServiceTimeBias(load.getServiceTimeBias());
         config.setUnderstandingBias(load.getUnderstandingBias());
-        config.setOn(load.isOn());
+        config.setOn(load.getIsOn());
         config.setSimulationId(load.getSimulationId());
         config.setSimulationStartTime(load.getSimulationStartTime());
     }

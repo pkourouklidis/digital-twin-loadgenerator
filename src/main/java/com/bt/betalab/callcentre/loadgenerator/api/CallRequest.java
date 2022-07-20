@@ -10,11 +10,12 @@ package com.bt.betalab.callcentre.loadgenerator.api;
 import com.bt.betalab.callcentre.loadgenerator.config.Config;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Random;
 
 public class CallRequest {
-    private Timestamp arrivalTime = new java.sql.Timestamp((new Date()).getTime());
+    private Instant arrivalTime = Instant.now();
 
     private boolean isEasy;
     private Customer customer = new Customer();
@@ -28,11 +29,11 @@ public class CallRequest {
         isEasy = rand.nextInt(100) > Config.getDifficultyBias();
     }
 
-    public Timestamp getArrivalTime() {
+    public Instant getArrivalTime() {
         return arrivalTime;
     }
 
-    public boolean isEasy() {
+    public boolean getIsEasy() {
         return isEasy;
     }
 
