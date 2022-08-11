@@ -7,26 +7,11 @@
 
 package com.bt.betalab.callcentre.loadgenerator.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Config {
-    @Value(value = "${loadgenerator.queueAddress}")
-    private static String queueAddress;
-
-    @Value(value = "${loadgenerator.queuePort}")
-    private static String queuePortString;
-
-    @Value(value = "${loadgenerator.queueUser}")
-    private static String queueUser;
-
-    @Value(value = "${loadgenerator.queuePassword}")
-    private static String queuePassword;
-
-    @Value(value = "${loadgenerator.queueName}")
-    private static String queueName;
-
     private static long callDelay = 1000;
 
     private static long difficultyBias = 50;
@@ -40,40 +25,12 @@ public class Config {
 
     private static boolean on = false;
 
-    public static String getQueueAddress() {
-        return queueAddress;
-    }
-
-    public static String getQueuePortString() {
-        return queuePortString;
-    }
-
-    public static int getQueuePort() {
-        try {
-            return Integer.valueOf(queuePortString);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    public static String getQueueUser() {
-        return queueUser;
-    }
-
-    public static String getQueuePassword() {
-        return queuePassword;
-    }
-
-    public static String getQueueName() {
-        return queueName;
-    }
-
     public static long getCallDelay() {
         return callDelay;
     }
 
-    public static void setCallDelay(long delay) {
-        callDelay = callDelay;
+    public static void setCallDelay(long callDelay) {
+        Config.callDelay = callDelay;
     }
 
     public static long getDifficultyBias() {
@@ -130,15 +87,5 @@ public class Config {
 
     public static void setSimulationStartTime(String startTime) {
         simulationStartTime = startTime;
-    }
-
-    public static boolean queueConfigIsValid() {
-        boolean addressOk = queueAddress != null;
-        boolean portOk = getQueuePort() != -1;
-        boolean userOk = queueUser != null;
-        boolean passwordOk = queuePassword != null;
-        boolean nameOk = queueName != null;
-
-        return addressOk && portOk && userOk && passwordOk && nameOk;
     }
 }

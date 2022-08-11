@@ -9,6 +9,7 @@ package com.bt.betalab.callcentre.loadgenerator.config;
 
 import com.bt.betalab.callcentre.loadgenerator.service.CreateCallTask;
 import com.bt.betalab.callcentre.loadgenerator.service.CustomDynamicSchedule;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -22,10 +23,13 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 public class DynamicSchedulingConfig implements SchedulingConfigurer {
 
+    @Autowired
+    QueueConfig config;
+
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         taskRegistrar.setScheduler(taskScheduler());
-        taskRegistrar.addTriggerTask(() -> myTask().fire(), myTrigger());
+        taskRegistrar.addTriggerTask(() -> myTask().fire(config), myTrigger());
     }
 
     @Bean(destroyMethod="shutdown")

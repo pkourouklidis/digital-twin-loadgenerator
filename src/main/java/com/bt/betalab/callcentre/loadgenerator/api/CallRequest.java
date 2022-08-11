@@ -9,9 +9,7 @@ package com.bt.betalab.callcentre.loadgenerator.api;
 
 import com.bt.betalab.callcentre.loadgenerator.config.Config;
 
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Random;
 
 public class CallRequest {

@@ -27,7 +27,7 @@ public class LoadRequest {
         return on;
     }
 
-    public void setIsOn(boolean on) {
+    public void setOn(boolean on) {
         this.on = on;
     }
 

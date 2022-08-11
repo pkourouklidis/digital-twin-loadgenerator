@@ -9,12 +9,14 @@ package com.bt.betalab.callcentre.loadgenerator.service;
 
 import com.bt.betalab.callcentre.loadgenerator.api.CallRequest;
 import com.bt.betalab.callcentre.loadgenerator.config.Config;
+import com.bt.betalab.callcentre.loadgenerator.config.QueueConfig;
 import com.bt.betalab.callcentre.loadgenerator.logging.LogLevel;
 import com.bt.betalab.callcentre.loadgenerator.logging.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -24,24 +26,25 @@ public class CreateCallTask {
     private ConnectionFactory factory = new ConnectionFactory();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public void fire() {
-        if (Config.isOn() && Config.queueConfigIsValid()) {
-            handle(new CallRequest());
+    public void fire(QueueConfig config) {
+        if (Config.isOn() && config.queueConfigIsValid()) {
+            handle(new CallRequest(), config);
         }
     }
 
-    public void handle(CallRequest request) {
+    public void handle(CallRequest request, QueueConfig config) {
         try {
-            factory.setHost(Config.getQueueAddress());
-            factory.setPort(Config.getQueuePort());
-            factory.setUsername(Config.getQueueUser());
-            factory.setPassword(Config.getQueuePassword());
+            mapper.registerModule(new JavaTimeModule());
+            factory.setHost(config.getQueueAddress());
+            factory.setPort(config.getQueuePort());
+            factory.setUsername(config.getQueueUser());
+            factory.setPassword(config.getQueuePassword());
 
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
-            channel.queueDeclare(Config.getQueueName(), false, false, false, null);
+            channel.queueDeclare(config.getQueueName(), true, false, false, null);
 
-            channel.basicPublish("", Config.getQueueName(), null, mapper.writeValueAsBytes(request));
+            channel.basicPublish("", config.getQueueName(), null, mapper.writeValueAsBytes(request));
 
             channel.close();
             connection.close();

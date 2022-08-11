@@ -33,7 +33,7 @@ management:
 
 loadgenerator:
   queueAddress: SETINENV
-  queuePort: SETINENV
+  queuePortString: SETINENV
   queueUser: SETINENV
   queuePassword: SETINENV
   queueName: SETINENV
@@ -47,6 +47,12 @@ spring:
 server:
   port: 8080
 
+loadgenerator:
+  queueAddress: localhost
+  queuePortString: 5672
+  queueUser: user
+  queuePassword: 6MLtpE3vhdGkYCT8
+  queueName: calls
 
 ---
 #=======================================================================================
