@@ -7,6 +7,8 @@
 
 package com.bt.betalab.callcentre.loadgenerator.config;
 
+import com.bt.betalab.callcentre.loadgenerator.logging.LogLevel;
+import com.bt.betalab.callcentre.loadgenerator.logging.Logger;
 import com.bt.betalab.callcentre.loadgenerator.service.CreateCallTask;
 import com.bt.betalab.callcentre.loadgenerator.service.CustomDynamicSchedule;
 import com.rabbitmq.client.AMQP;
@@ -36,23 +38,33 @@ public class DynamicSchedulingConfig implements SchedulingConfigurer {
     private com.rabbitmq.client.Channel channel;
 
     @PostConstruct
-    public void initialiser() throws IOException, TimeoutException {
+    public void initialiser() {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(config.getQueueAddress());
         factory.setPort(config.getQueuePort());
         factory.setUsername(config.getQueueUser());
         factory.setPassword(config.getQueuePassword());
 
-        Connection connection = factory.newConnection();
-        channel = connection.createChannel();
-        channel.queueDeclarePassive(config.getQueueName());
-        channel.queueDeclare(config.getQueueName(), true, false, false, null);
+        Connection connection = null;
+        try {
+            connection = factory.newConnection();
+            channel = connection.createChannel();
+            channel.queueDeclarePassive(config.getQueueName());
+            channel.queueDeclare(config.getQueueName(), true, false, false, null);
+            Logger.log("Connected to message queue", LogLevel.INFO);
+        } catch (Exception e) {
+            Logger.log("Could not connect to message queue: " + e.getMessage(), LogLevel.ERROR);
+        }
     }
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.setScheduler(taskScheduler());
-        taskRegistrar.addTriggerTask(() -> myTask().fire(config, channel), myTrigger());
+        if (channel != null) {
+            taskRegistrar.setScheduler(taskScheduler());
+            taskRegistrar.addTriggerTask(() -> myTask().fire(config, channel), myTrigger());
+        } else {
+            Logger.log("No valid message queue could be connected to", LogLevel.ERROR);
+        }
     }
 
     @Bean(destroyMethod="shutdown")

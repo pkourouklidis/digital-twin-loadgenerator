@@ -33,16 +33,6 @@ public class CreateCallTask {
     public void handle(CallRequest request, QueueConfig config, Channel channel) {
         try {
             mapper.registerModule(new JavaTimeModule());
-//            factory.setHost(config.getQueueAddress());
-//            factory.setPort(config.getQueuePort());
-//            factory.setUsername(config.getQueueUser());
-//            factory.setPassword(config.getQueuePassword());
-//
-//            Connection connection = factory.newConnection();
-//            Channel channel = connection.createChannel();
-//            channel.queueDeclarePassive(config.getQueueName());
-//            channel.queueDeclare(config.getQueueName(), true, false, false, null);
-
             channel.basicPublish("", config.getQueueName(), null, mapper.writeValueAsBytes(request));
         } catch (IOException e) {
             Logger.log(e.getMessage(), LogLevel.ERROR);
