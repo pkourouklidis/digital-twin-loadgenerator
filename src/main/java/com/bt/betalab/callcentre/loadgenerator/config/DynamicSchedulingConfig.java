@@ -9,6 +9,10 @@ package com.bt.betalab.callcentre.loadgenerator.config;
 
 import com.bt.betalab.callcentre.loadgenerator.service.CreateCallTask;
 import com.bt.betalab.callcentre.loadgenerator.service.CustomDynamicSchedule;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +20,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 @Configuration
 @EnableScheduling
@@ -26,10 +33,26 @@ public class DynamicSchedulingConfig implements SchedulingConfigurer {
     @Autowired
     QueueConfig config;
 
+    private com.rabbitmq.client.Channel channel;
+
+    @PostConstruct
+    public void initialiser() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(config.getQueueAddress());
+        factory.setPort(config.getQueuePort());
+        factory.setUsername(config.getQueueUser());
+        factory.setPassword(config.getQueuePassword());
+
+        Connection connection = factory.newConnection();
+        channel = connection.createChannel();
+        channel.queueDeclarePassive(config.getQueueName());
+        channel.queueDeclare(config.getQueueName(), true, false, false, null);
+    }
+
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         taskRegistrar.setScheduler(taskScheduler());
-        taskRegistrar.addTriggerTask(() -> myTask().fire(config), myTrigger());
+        taskRegistrar.addTriggerTask(() -> myTask().fire(config, channel), myTrigger());
     }
 
     @Bean(destroyMethod="shutdown")

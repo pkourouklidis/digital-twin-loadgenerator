@@ -22,35 +22,29 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 public class CreateCallTask {
-
-    private ConnectionFactory factory = new ConnectionFactory();
     private ObjectMapper mapper = new ObjectMapper();
 
-    public void fire(QueueConfig config) {
-        if (Config.isOn() && config.queueConfigIsValid()) {
-            handle(new CallRequest(), config);
+    public void fire(QueueConfig config, Channel channel) {
+        if (Config.isOn()) {
+            handle(new CallRequest(), config, channel);
         }
     }
 
-    public void handle(CallRequest request, QueueConfig config) {
+    public void handle(CallRequest request, QueueConfig config, Channel channel) {
         try {
             mapper.registerModule(new JavaTimeModule());
-            factory.setHost(config.getQueueAddress());
-            factory.setPort(config.getQueuePort());
-            factory.setUsername(config.getQueueUser());
-            factory.setPassword(config.getQueuePassword());
-
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel();
-            channel.queueDeclare(config.getQueueName(), true, false, false, null);
+//            factory.setHost(config.getQueueAddress());
+//            factory.setPort(config.getQueuePort());
+//            factory.setUsername(config.getQueueUser());
+//            factory.setPassword(config.getQueuePassword());
+//
+//            Connection connection = factory.newConnection();
+//            Channel channel = connection.createChannel();
+//            channel.queueDeclarePassive(config.getQueueName());
+//            channel.queueDeclare(config.getQueueName(), true, false, false, null);
 
             channel.basicPublish("", config.getQueueName(), null, mapper.writeValueAsBytes(request));
-
-            channel.close();
-            connection.close();
         } catch (IOException e) {
-            Logger.log(e.getMessage(), LogLevel.ERROR);
-        } catch (TimeoutException e) {
             Logger.log(e.getMessage(), LogLevel.ERROR);
         }
     }
