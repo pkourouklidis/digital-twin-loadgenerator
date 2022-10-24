@@ -11,8 +11,6 @@ import com.bt.betalab.callcentre.loadgenerator.logging.LogLevel;
 import com.bt.betalab.callcentre.loadgenerator.logging.Logger;
 import com.bt.betalab.callcentre.loadgenerator.service.CreateCallTask;
 import com.bt.betalab.callcentre.loadgenerator.service.CustomDynamicSchedule;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +21,8 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
 @Configuration
 @EnableScheduling
@@ -49,7 +45,6 @@ public class DynamicSchedulingConfig implements SchedulingConfigurer {
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.queueDeclarePassive(config.getQueueName());
             channel.queueDeclare(config.getQueueName(), true, false, false, null);
             Logger.log("Connected to message queue", LogLevel.INFO);
         } catch (Exception e) {

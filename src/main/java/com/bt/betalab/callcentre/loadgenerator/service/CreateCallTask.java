@@ -13,13 +13,10 @@ import com.bt.betalab.callcentre.loadgenerator.config.QueueConfig;
 import com.bt.betalab.callcentre.loadgenerator.logging.LogLevel;
 import com.bt.betalab.callcentre.loadgenerator.logging.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.rabbitmq.client.Channel;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 public class CreateCallTask {
     private ObjectMapper mapper = new ObjectMapper();
